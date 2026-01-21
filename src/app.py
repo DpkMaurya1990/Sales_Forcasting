@@ -2,12 +2,16 @@ from fastapi import FastAPI
 import pandas as pd
 import numpy as np
 import joblib
+from pathlib import Path
 
 from src.features import build_features
 
-DATA_PATH = "data/raw/"
-MODEL_PATH = "models/lightgbm_model.pkl"
-FEATURES_PATH = "models/features.pkl"
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+DATA_PATH = BASE_DIR / "data" / "raw"
+MODEL_PATH = BASE_DIR / "models" / "lightgbm_model.pkl"
+FEATURES_PATH = BASE_DIR / "models" / "features.pkl"
+
 
 app = FastAPI(title="Store Sales Forecast API")
 
