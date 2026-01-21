@@ -39,9 +39,9 @@ model = joblib.load(LOCAL_MODEL_PATH)
 FEATURES = joblib.load(LOCAL_FEATURES_PATH)
 
 
-oil = pd.read_csv(DATA_PATH + "oil.csv", parse_dates=["date"])
-holidays = pd.read_csv(DATA_PATH + "holidays_events.csv")
-train_hist = pd.read_csv(DATA_PATH + "train.csv", parse_dates=["date"])
+oil = pd.read_csv(DATA_PATH / "oil.csv", parse_dates=["date"])
+holidays = pd.read_csv(DATA_PATH / "holidays_events.csv")
+train_hist = pd.read_csv(DATA_PATH / "train.csv", parse_dates=["date"])
 
 train_hist = (
     train_hist
