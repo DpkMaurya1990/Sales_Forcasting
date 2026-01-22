@@ -4,6 +4,7 @@ import numpy as np
 import joblib
 from pathlib import Path
 import os
+import io
 import boto3
 
 from src.features import build_features
@@ -35,8 +36,18 @@ if not LOCAL_FEATURES_PATH.exists():
     s3.download_file(S3_BUCKET, FEATURES_KEY, str(LOCAL_FEATURES_PATH))
 
 # ---------- LOAD ARTIFACTS ----------
-model = joblib.load(LOCAL_MODEL_PATH)
-FEATURES = joblib.load(LOCAL_FEATURES_PATH)
+S3_BUCKET = "store-sales-forecast-models-deepak"
+MODEL_KEY = "v1/lightgbm_model.pkl"
+FEATURES_KEY = "v1/features.pkl"
+
+s3 = boto3.client("s3")
+
+def load_from_s3(bucket, key):
+    obj = s3.get_object(Bucket=bucket, Key=key)
+    return joblib.load(io.BytesIO(obj["Body"].read()))
+
+model = load_from_s3(S3_BUCKET, MODEL_KEY)
+FEATURES = load_from_s3(S3_BUCKET, FEATURES_KEY)
 
 
 oil = pd.read_csv(DATA_PATH / "oil.csv", parse_dates=["date"])
