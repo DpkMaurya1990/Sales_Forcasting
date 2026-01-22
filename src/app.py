@@ -50,9 +50,18 @@ model = load_from_s3(S3_BUCKET, MODEL_KEY)
 FEATURES = load_from_s3(S3_BUCKET, FEATURES_KEY)
 
 
-oil = pd.read_csv(DATA_PATH / "oil.csv", parse_dates=["date"])
-holidays = pd.read_csv(DATA_PATH / "holidays_events.csv")
-train_hist = pd.read_csv(DATA_PATH / "train.csv", parse_dates=["date"])
+s3 = boto3.client("s3")
+
+BUCKET = "store-sales-forecast-models-deepak"
+DATA_PREFIX = "store-sales/data"
+
+def read_csv_s3(key, parse_dates=None):
+    obj = s3.get_object(Bucket=BUCKET, Key=key)
+    return pd.read_csv(io.BytesIO(obj["Body"].read()), parse_dates=parse_dates)
+
+oil = read_csv_s3(f"{DATA_PREFIX}/oil.csv", parse_dates=["date"])
+holidays = read_csv_s3(f"{DATA_PREFIX}/holidays_events.csv")
+train_hist = read_csv_s3(f"{DATA_PREFIX}/train.csv", parse_dates=["date"])
 
 train_hist = (
     train_hist
